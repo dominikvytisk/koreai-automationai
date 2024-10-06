@@ -3,6 +3,7 @@ import { initDB } from '../database/postgres';
 import { Booking } from '../models/booking';
 
 export const bookFlight = async (req: Request, res: Response): Promise<void> => {
+    console.log(req.body);
     const { fullname, contact_number, boarding_city, destination_city, departure_date, return_date, email_address }: Booking = req.body;
   
     const db = await initDB();
