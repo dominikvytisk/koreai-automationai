@@ -44,7 +44,7 @@ export const modifyBookingDetails = async (req: Request, res: Response): Promise
     const client = await db.connect();
     try {
         await client.query(
-            'UPDATE bookings SET departure_date = $1, return_date = $2, boarding_city = $3, destination_city = $4 WHERE contact_number = $5',
+            'UPDATE bookings SET departure_date = $1, return_date = $2, boarding_city = $3, destination_city = $4 WHERE contact_number = $5 or unique_id = $5',
             [departure_date, return_date, boarding_city, destination_city, phone_number]
         );
         res.json({ message: 'Booking updated successfully!' });
