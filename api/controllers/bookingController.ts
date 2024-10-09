@@ -25,7 +25,7 @@ export const fetchBookingDetails = async (req: Request, res: Response): Promise<
     const db = await initDB();
     const client = await db.connect();
     try {
-        const result = await client.query('SELECT * FROM bookings WHERE contact_number = $1 OR unique_id = $2', [`+${searchValue}`,searchValue]);
+        const result = await client.query('SELECT id,unique_id,fullname,contact_number,boarding_city,destination_city,departure_date::date,return_date::date,email_address FROM bookings WHERE contact_number = $1 OR unique_id = $2', [`+${searchValue}`,searchValue]);
         const booking = result.rows[0];
         if (!booking) {
             res.status(404).json({ message: 'Booking not found!' });
