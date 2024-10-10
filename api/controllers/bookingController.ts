@@ -59,7 +59,7 @@ export const cancelBooking = async (req: Request, res: Response): Promise<void> 
     const db = await initDB();
     const client = await db.connect();
     try {
-        await client.query('DELETE FROM bookings WHERE contact_number = $1', [phone_number]);
+        await client.query('DELETE FROM bookings WHERE contact_number = $1 or unique_id = $1', [phone_number]);
         res.json({ message: 'Booking cancelled successfully!' });
     } finally {
         client.release();
