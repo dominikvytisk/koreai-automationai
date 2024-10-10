@@ -43,10 +43,34 @@ export const modifyBookingDetails = async (req: Request, res: Response): Promise
     const db = await initDB();
     const client = await db.connect();
     try {
-        await client.query(
-            'UPDATE bookings SET departure_date = $1, return_date = $2, boarding_city = $3, destination_city = $4 WHERE contact_number = $5 or unique_id = $5',
-            [departure_date, return_date, boarding_city, destination_city, phone_number]
-        );
+        const fieldsToUpdate = [];
+        const values = [];
+        let index = 1;
+
+        if (departure_date !== undefined && departure_date !== '') {
+            fieldsToUpdate.push(`departure_date = $${index++}`);
+            values.push(departure_date);
+        }
+        if (return_date !== undefined && return_date !== '') {
+            fieldsToUpdate.push(`return_date = $${index++}`);
+            values.push(return_date);
+        }
+        if (boarding_city !== undefined && boarding_city !== '') {
+            fieldsToUpdate.push(`boarding_city = $${index++}`);
+            values.push(boarding_city);
+        }
+        if (destination_city !== undefined && destination_city !== '') {
+            fieldsToUpdate.push(`destination_city = $${index++}`);
+            values.push(destination_city);
+        }
+
+        if (fieldsToUpdate.length === 0) {
+            res.status(400).json({ message: 'No fields to update' });
+            return;
+        }
+        values.push(phone_number);
+        const query = `UPDATE bookings SET ${fieldsToUpdate.join(', ')} WHERE contact_number = $${index} or unique_id = $${index}`;
+        await client.query(query, values);
         res.json({ message: 'Booking updated successfully!' });
     } finally {
         client.release();
